@@ -3,14 +3,19 @@ package com.example.musicgalery
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.FrameLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: ViewModel
+    private lateinit var progress: ProgressBar
+    private lateinit var overlay: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +28,10 @@ class MainActivity : AppCompatActivity() {
         val passwordField: TextInputLayout = findViewById(R.id.input_layout_password)
         val passwordConfirmationField: TextInputLayout =
             findViewById(R.id.input_layout_password_confirm)
+
+        progress = findViewById(R.id.progress)
+        overlay = findViewById(R.id.overlay_container)
+
 
         buttonLogin.setOnClickListener {
             val emailText = loginField.editText?.text.toString()
@@ -44,7 +53,23 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Something went wrong. Please, retry!", Toast.LENGTH_LONG).show()
         })
 
+        viewModel.showProgressLiveData.observe(this, {
+            showProgress()
+        })
+        viewModel.hideProgressLiveData.observe(this, {
+            hideProgress()
+        })
+
     }
 
+    private fun hideProgress() {
+        progress.isVisible = false
+        overlay.isVisible = false
+    }
+
+    private fun showProgress() {
+        progress.isVisible = true
+        overlay.isVisible = true
+    }
 
 }
